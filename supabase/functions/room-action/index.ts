@@ -151,13 +151,36 @@ Deno.serve(async request => {
       if(roomResult.data.status!=='lobby') return fail('This match has already started.')
       const playersResult=await admin.from('room_players').select('id,ready,state').eq('room_id',roomId).neq('state','left')
       if((playersResult.data||[]).length<2 || !(playersResult.data||[]).every((player:any)=>player.ready)) return fail('At least two ready players are required.')
-      const startedAt=new Date().toISOString()
+      // A shared future start time keeps every client’s countdown in sync.
+      const startedAt=new Date(Date.now()+8000).toISOString()
       const roomUpdate=await admin.from('rooms').update({status:'playing',started_at:startedAt,updated_at:startedAt}).eq('id',roomId)
       const playersUpdate=await admin.from('room_players').update({state:'active',ready:false,last_seen:startedAt}).eq('room_id',roomId).in('state',['joined','ready'])
       if(roomUpdate.error || playersUpdate.error) throw new Error('Could not start this match.')
       return new Response(JSON.stringify({snapshot:await snapshot(admin,roomId,userId)}),options)
     }
+    if(action==='pause_match') {
+      const [roomResult,playerResult]=await Promise.all([
+        admin.from('rooms').select('status,paused_by_user_id').eq('id',roomId).single(),
+        admin.from('room_players').select('state').eq('room_id',roomId).eq('user_id',userId).maybeSingle()
+      ])
+      if(roomResult.error || roomResult.data.status!=='playing' || playerResult.data?.state!=='active') return fail('This match is not active.')
+      if(roomResult.data.paused_by_user_id && roomResult.data.paused_by_user_id!==userId) return fail('Another shopper has already paused the match.')
+      const updated=await admin.from('rooms').update({paused_by_user_id:userId,paused_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',roomId)
+      if(updated.error) throw new Error('Could not pause the match.')
+      return new Response(JSON.stringify({snapshot:await snapshot(admin,roomId,userId)}),options)
+    }
+    if(action==='resume_match') {
+      const roomResult=await admin.from('rooms').select('status,paused_by_user_id,paused_at,started_at').eq('id',roomId).single()
+      const room=roomResult.data
+      if(roomResult.error || room.status!=='playing' || room.paused_by_user_id!==userId) return fail('Only the shopper who paused can resume the match.',403)
+      const pausedAt=Date.parse(room.paused_at||''),startedAt=Date.parse(room.started_at||''),pauseLength=Number.isFinite(pausedAt)?Math.max(0,Date.now()-pausedAt):0
+      const updated=await admin.from('rooms').update({paused_by_user_id:null,paused_at:null,started_at:Number.isFinite(startedAt)?new Date(startedAt+pauseLength).toISOString():room.started_at,updated_at:new Date().toISOString()}).eq('id',roomId)
+      if(updated.error) throw new Error('Could not resume the match.')
+      return new Response(JSON.stringify({snapshot:await snapshot(admin,roomId,userId)}),options)
+    }
     if(action==='move_player') {
+      const roomResult=await admin.from('rooms').select('paused_by_user_id').eq('id',roomId).single()
+      if(roomResult.error || roomResult.data.paused_by_user_id) return fail('This match is paused.')
       const x=Math.max(7,Math.min(88,Number(body.x))),y=Math.max(16,Math.min(76,Number(body.y)))
       if(!Number.isFinite(x)||!Number.isFinite(y)) return fail('Invalid position.')
       const moved=await admin.from('room_players').update({position:{x,y},last_seen:new Date().toISOString()}).eq('room_id',roomId).eq('user_id',userId).eq('state','active')
@@ -165,11 +188,15 @@ Deno.serve(async request => {
       return new Response(JSON.stringify({ok:true}),options)
     }
     if(action==='take_product') {
+      const roomResult=await admin.from('rooms').select('paused_by_user_id').eq('id',roomId).single()
+      if(roomResult.error || roomResult.data.paused_by_user_id) return fail('This match is paused.')
       const taken=await admin.rpc('take_room_product',{p_room:roomId,p_user:userId,p_product:String(body.productId||'')})
       if(taken.error) return fail(taken.error.message)
       return new Response(JSON.stringify({pickup:taken.data,snapshot:await snapshot(admin,roomId,userId)}),options)
     }
     if(action==='finish_player') {
+      const roomResult=await admin.from('rooms').select('paused_by_user_id').eq('id',roomId).single()
+      if(roomResult.error || roomResult.data.paused_by_user_id) return fail('This match is paused.')
       const finished=await admin.rpc('finish_room_player',{p_room:roomId,p_user:userId})
       if(finished.error) return fail(finished.error.message)
       return new Response(JSON.stringify({snapshot:await snapshot(admin,roomId,userId)}),options)
