@@ -1,0 +1,18 @@
+{
+  "name": "Supermarket Rapido",
+  "short_name": "Rapido",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0c432d",
+  "theme_color": "#0c432d",
+  "icons": [
+    {
+      "src": "supermarket-r-favicon-transparent.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
