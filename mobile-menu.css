@@ -1,3 +1,36 @@
 .mobile-menu-back{display:none;position:absolute;z-index:14;top:12px;left:12px;min-width:78px;min-height:42px;padding:8px 12px;border:2px solid #ffffffaa;border-radius:11px;background:#71839a;color:#fff;font-size:11px;font-weight:900;box-shadow:0 4px #435165;touch-action:manipulation}
 body.mobile-player .mobile-menu-back{display:block}
 body.mobile-player #live-multiplayer .mobile-menu-back{display:none}
+
+/* The title buttons are created after the initial HTML is parsed. Keep their
+   interaction layer explicit so no decorative title art can intercept a tap. */
+#title .title-actions{position:relative;z-index:20;pointer-events:auto}
+#title .title-actions button{pointer-events:auto;touch-action:manipulation}
+
+/* Keep every title-screen destination reachable on touch devices.  Small and
+   landscape phones have much less vertical space than the desktop title
+   composition, so the decorative characters are scaled down and the three
+   navigation buttons get their own high, touch-friendly layer. */
+body.mobile-player #title{padding:clamp(40px,6vh,62px) 12px 12px;overflow:hidden}
+body.mobile-player #title .title-logo{width:min(92vw,520px);height:clamp(78px,18vh,150px);margin:-1vh auto 0}
+body.mobile-player #title .title-people{width:220px;height:clamp(92px,18vh,145px);margin:0 auto}
+body.mobile-player #title .title-people .character3d{transform:scale(.68);transform-origin:bottom center}
+body.mobile-player #title>p{margin:4px 0 8px;font-size:10px;line-height:1.2;letter-spacing:1px}
+body.mobile-player #title .title-actions{position:relative;z-index:20;display:grid;grid-template-columns:1fr;gap:9px;width:min(292px,88vw);margin:0 auto}
+body.mobile-player #title .title-actions button{display:block;width:100%;min-height:45px;margin:0!important;padding:10px 14px;font-size:14px;line-height:1.1;touch-action:manipulation}
+body.mobile-player #title .title-actions button strong{font-size:17px}
+body.mobile-player #title>small{display:block;margin:9px auto 0;max-width:90vw;font-size:9px;line-height:1.2}
+
+/* Landscape phones are especially short; retain navigation while giving the
+   logo and character art a compact footprint. */
+@media (orientation:landscape) and (max-height:520px){
+  body.mobile-player #title{padding-top:34px}
+  body.mobile-player #title .title-logo{height:66px;margin:0 auto}
+  body.mobile-player #title .title-people{height:58px}
+  body.mobile-player #title .title-people .character3d{transform:scale(.43)}
+  body.mobile-player #title>p{margin:1px 0 4px;font-size:8px}
+  body.mobile-player #title .title-actions{grid-template-columns:repeat(3,1fr);width:min(500px,94vw);gap:7px}
+  body.mobile-player #title .title-actions button{min-height:38px;padding:7px 6px;font-size:10px}
+  body.mobile-player #title .title-actions button strong{font-size:12px}
+  body.mobile-player #title>small{display:none}
+}
