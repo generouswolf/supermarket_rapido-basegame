@@ -11,7 +11,7 @@ body.mobile-player #live-multiplayer .mobile-menu-back{display:none}
    landscape phones have much less vertical space than the desktop title
    composition, so the decorative characters are scaled down and the three
    navigation buttons get their own high, touch-friendly layer. */
-body.mobile-player #title{padding:clamp(40px,6vh,62px) 12px 12px;overflow:hidden}
+body.mobile-player #title{padding: max(clamp(40px,6vh,62px),env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));overflow:hidden}
 body.mobile-player #title .title-logo{width:min(92vw,520px);height:clamp(78px,18vh,150px);margin:-1vh auto 0}
 body.mobile-player #title .title-people{width:220px;height:clamp(92px,18vh,145px);margin:0 auto}
 body.mobile-player #title .title-people .character3d{transform:scale(.68);transform-origin:bottom center}
@@ -33,4 +33,22 @@ body.mobile-player #title>small{display:block;margin:9px auto 0;max-width:90vw;f
   body.mobile-player #title .title-actions button{min-height:38px;padding:7px 6px;font-size:10px}
   body.mobile-player #title .title-actions button strong{font-size:12px}
   body.mobile-player #title>small{display:none}
+}
+
+/* iPhone safe-area handling for standalone/PWA launches. Extend the visible
+   surfaces through the home-indicator inset while keeping interactive UI out
+   of the notch and gesture zones. */
+body.mobile-player #game,body.mobile-player #results{height:100dvh;min-height:100svh}
+body.mobile-player #game .store{bottom:calc(52px + env(safe-area-inset-bottom))}
+body.mobile-player #game #cart{height:calc(52px + env(safe-area-inset-bottom));padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));padding-bottom:max(10px,env(safe-area-inset-bottom))}
+body.mobile-player #mobile-controls{bottom:calc(44px + env(safe-area-inset-bottom));padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+body.mobile-player #results{padding-top:max(12px,env(safe-area-inset-top));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:max(12px,env(safe-area-inset-bottom));padding-left:max(12px,env(safe-area-inset-left))}
+body.mobile-player .setup-head{padding-left:max(5vw,env(safe-area-inset-left));padding-right:max(5vw,env(safe-area-inset-right))}
+body.mobile-player #ready{padding-bottom:env(safe-area-inset-bottom)}
+@media (orientation:landscape) and (max-height:520px){
+  body.iphone-compact #game .store,body.iphone-duo-folded #game .store{bottom:calc(38px + env(safe-area-inset-bottom))}
+  body.iphone-compact #game #cart,body.iphone-duo-folded #game #cart{height:calc(38px + env(safe-area-inset-bottom))}
+  body.iphone-duo-unfolded #game .store{bottom:calc(44px + env(safe-area-inset-bottom))}
+  body.iphone-duo-unfolded #game #cart{height:calc(44px + env(safe-area-inset-bottom))}
+  body.mobile-player #mobile-controls{bottom:calc(23px + env(safe-area-inset-bottom))}
 }
