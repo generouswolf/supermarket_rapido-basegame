@@ -1,3 +1,11 @@
+// Semantic release version. Keep the patch component internally so future
+// bug-fix releases can increment it without changing the public label format.
+const APP_VERSION=Object.freeze({major:1,minor:0,patch:0});
+const APP_VERSION_LABEL=`V.${APP_VERSION.major}.${APP_VERSION.minor}`;
+const APP_VERSION_ARIA=`Version ${APP_VERSION.major}.${APP_VERSION.minor}`;
+const releaseVersion=document.querySelector('.release-version');
+if(releaseVersion){releaseVersion.textContent=APP_VERSION_LABEL;releaseVersion.setAttribute('aria-label',APP_VERSION_ARIA);}
+
 const stores={
  food:{name:"RAPIDO'S FOODLAND",sign:'FRESH • FAST • FUN',shelves:['PANTRY','FRESH PICKS'],items:[['Golden Apples',4.5,'🍎','#ed6554',31,58],['Mega Cereal',7.25,'🌟','#6e87d5',42,46],['Fresh Milk',5,'🥛','#e8f4f5',56,65],['Snack Stack',3.8,'🥨','#ee914c',68,45],['Power Juice',8.9,'🍊','#f2a23e',78,61],['Super Bites',6.6,'🍪','#c96f50',16,55],['Bread Loaf',3.25,'🍞','#d49a55',25,37],['Berry Box',6.45,'🫐','#5d6ec2',37,33],['Cheese Wheel',7.9,'🧀','#f7c34f',51,36],['Pasta Pack',4.2,'🍝','#e7b84b',63,33],['Iced Tea',3.6,'🧃','#f09349',73,39],['Cake Slice',9.5,'🍰','#f2819a',85,45]]},
  tech:{name:'TECHNO EXPRESS',sign:'POWER • PLAY • CONNECT',shelves:['GADGETS','GAMING'],items:[['Smart Watch',149,'⌚','#59b5e6',31,58],['Gaming Pad',65,'🎮','#9b69d3',42,46],['Headphones',89,'🎧','#ef674e',56,65],['Phone Pro',399,'📱','#4d789d',68,45],['Camera',249,'📷','#e2a543',78,61],['Laptop Air',599,'💻','#82bc9f',16,55],['VR Headset',319,'🥽','#4d5f79',25,37],['Smart Speaker',99,'🔊','#6c8dd2',37,33],['Keyboard',119,'⌨️','#7d7d90',51,36],['Drone Mini',179,'🚁','#e8a54c',63,33],['Power Bank',49,'🔋','#62ae7a',73,39],['Game Console',449,'🕹️','#e06c93',85,45]]}
