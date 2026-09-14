@@ -138,3 +138,53 @@ body.mobile-player #ready{padding-bottom:env(safe-area-inset-bottom)}
     touch-action:manipulation;
   }
 }
+
+/* Fallback for iOS browsers that do not apply the mobile-player class before
+   the first menu paint. Keep the creator usable even during that first frame. */
+@media (max-width:600px){
+  #setup .customize{
+    width:min(94vw,420px);
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+    margin:18px auto 0;
+    overflow:visible;
+  }
+  #setup .customize>label{
+    justify-self:center;
+    width:min(100%,280px);
+    text-align:center;
+  }
+  #setup .customize>label input{
+    width:100%;
+    min-height:42px;
+    text-align:center;
+  }
+  #setup .customize .sex-choice,
+  #setup .customize>div:last-child{
+    justify-content:center;
+    flex-wrap:wrap;
+    row-gap:10px;
+  }
+  #setup .customize .sex-choice span,
+  #setup .customize>div:last-child>span{
+    flex:0 0 100%;
+    text-align:center;
+  }
+  #setup .customize .sex-choice button{
+    min-height:42px;
+    padding:8px 14px;
+  }
+  #setup .customize>div:last-child{max-width:100%;}
+  #setup .customize .swatch{
+    width:36px;
+    height:36px;
+    flex:0 0 36px;
+    touch-action:manipulation;
+  }
+  #setup .setup-panel.active{
+    max-height:calc(100dvh - 74px);
+    overflow-y:auto;
+    padding-bottom:84px;
+  }
+}
