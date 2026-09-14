@@ -35,6 +35,44 @@ body.mobile-player #title>small{display:block;margin:9px auto 0;max-width:90vw;f
   body.mobile-player #title>small{display:none}
 }
 
+/* Keep iPhone status-bar/notch controls inside the usable area.  The root
+   surface is clipped to the rounded display corners when launched as an app,
+   while the body background continues behind the safe-area inset. */
+body.mobile-player main{
+  border-radius:clamp(18px,4vw,32px);
+  overflow:hidden;
+}
+body.mobile-player #language-picker{
+  top:calc(env(safe-area-inset-top) + 10px);
+  right:calc(10px + env(safe-area-inset-right));
+}
+body.mobile-player #title .title-logo{
+  margin:max(8px,calc(env(safe-area-inset-top) - 10px)) auto 0;
+}
+body.mobile-player #accessibility-picker{
+  top:calc(env(safe-area-inset-top) + 8px);
+  right:calc(166px + env(safe-area-inset-right));
+}
+body.mobile-player .mobile-menu-back{
+  top:calc(env(safe-area-inset-top) + 12px);
+  left:calc(12px + env(safe-area-inset-left));
+}
+body.mobile-player .setup-head{
+  height:calc(74px + env(safe-area-inset-top));
+  padding-top:env(safe-area-inset-top);
+}
+body.mobile-player #ready{
+  padding-top:max(7vh,calc(env(safe-area-inset-top) + 14px));
+}
+body.mobile-player #accessibility-dialog,
+body.mobile-player #live-leave-confirm,
+body.mobile-player #live-host-disconnected{
+  padding-top:max(22px,env(safe-area-inset-top));
+  padding-right:max(22px,env(safe-area-inset-right));
+  padding-bottom:max(22px,env(safe-area-inset-bottom));
+  padding-left:max(22px,env(safe-area-inset-left));
+}
+
 /* iPhone safe-area handling for standalone/PWA launches. Extend the visible
    surfaces through the home-indicator inset while keeping interactive UI out
    of the notch and gesture zones. */
